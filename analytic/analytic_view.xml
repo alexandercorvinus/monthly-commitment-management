@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_account_analytic_account_form" model="ir.ui.view">
+            <field name="name">analytic.analytic.account.form</field>
+            <field name="model">account.analytic.account</field>
+            <field name="arch" type="xml">
+                <form string="Analytic Account">
+                    <sheet string="Analytic Account">
+                        <div class="oe_right oe_button_box" name="buttons">
+                        </div>
+
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" class="oe_inline" readonly="1"/>
+                            </h1>
+                            <div name="project"/>
+                        </div>
+
+                        <group name="main">
+                            <group>
+                                <field name="partner_id" on_change="on_change_partner_id(partner_id, name)" string="Service Provider"/>
+                                <field name="contract_name" string="Agreement Name" required="1"/>
+                                <field name="code" string="Code"/>
+                                <field name="service_type" required="1"/>
+                                <field name="manager_id" context="{'default_groups_ref': ['base.group_user', 'base.group_partner_manager', 'account.group_account_manager']}" invisible="1"/>
+                                <field name="currency_id" attrs="{'invisible': ['|',('type', '&lt;&gt;', 'view'), ('company_id', '&lt;&gt;', False)]}"/>
+                            </group>
+                            <group>
+                                <field name="type" invisible="context.get('default_type', False)"/>
+                                <field name="template_id" on_change="on_change_template(template_id, date_start)" domain="[('type','=','template')]" attrs="{'invisible': [('type','in',['view', 'normal','template'])]}" context="{'default_type' : 'template'}" invisible="1"/>
+                                <field name="parent_id" on_change="on_change_parent(parent_id)" invisible="1"/>
+                                <field name="company_id" on_change="on_change_company(company_id)" widget="selection" groups="base.group_multi_company" attrs="{'required': [('type','&lt;&gt;','view')]}"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Agreement Information" name="contract_page" attrs="{'invisible':[('type','not in',['contract', 'template'])]}">
+                                <group string="Duration" name="contract">
+                                    <field name="date_start"/>
+                                    <label for="date" string="Expected End Date"/>
+                                    <div name="duration">
+                                        <field name="date" class="oe_inline"/>
+                                    </div>
+                                </group>
+                                <separator string="Terms and Conditions" name="description"/>
+                                <field name="description"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+     </data>
+</openerp>
